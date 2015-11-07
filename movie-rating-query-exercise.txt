@@ -1,0 +1,57 @@
+Q1
+select title from movie where director = 'Steven Spielberg';
+
+Q2
+select year from movie 
+where mid in (select mid from rating where stars >3)
+order by year;
+
+Q3
+select title from movie 
+where mid not in (select mid from rating); 
+
+Q4
+select name from reviewer 
+where rid in (select rid from rating where ratingdate is null);
+
+Q5
+select name,title,stars,ratingdate
+from (reviewer a inner join rating b on a.rid = b.rid) c inner join movie d on c.mid=d.mid
+order by name,title,stars;
+
+Q6
+select name,title from
+((select b.rid,b.mid
+from rating a, rating b
+where a.rid = b.rid and a.mid = b.mid and a.stars < b.stars and b.ratingdate > a.ratingdate) c inner join Reviewer on c.rid=reviewer.rid) d inner join movie on d.mid = movie.mid;
+
+Q7
+select title,max(stars)
+from movie a inner join rating b on a.mid = b.mid
+group by b.mid
+having count(stars) >=1
+order by title;
+
+Q8
+select title,max(stars)-min(stars) as [rating spread]
+from movie a inner join rating b on a.mid = b.mid
+group by b.mid
+having count(stars) >=1
+order by [rating spread] desc,title;
+
+Q9
+select
+(select avg(av) 
+from 
+(select avg(stars) as av,year
+from movie a inner join rating b on a.mid = b.mid
+group by b.mid) 
+where year < 1980)
+-
+(select avg(av) 
+from 
+(select avg(stars) as av,year
+from movie a inner join rating b on a.mid = b.mid
+group by b.mid) 
+where year > 1980)
+;

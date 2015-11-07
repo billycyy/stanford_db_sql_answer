@@ -1,0 +1,71 @@
+Q1
+select name from reviewer
+where rid in (select rid from rating where mid = (select mid from movie where title = 'Gone with the Wind'));
+
+Q2
+select name,title,stars
+from movie a,reviewer b,rating c
+where a.director = b.name and a.mid = c.mid and b.rid = c.rid; 
+
+Q3
+select name from reviewer
+union
+select title as name from movie
+order by name;
+
+Q4
+select title
+from movie 
+where mid not in
+(select a.mid from movie a,reviewer b,rating c
+where a.mid = c.mid and b.rid = c.rid and b.name = 'Chris Jackson');
+
+Q5
+select distinct a.name, b.name from
+(reviewer join rating on reviewer.rid = rating.rid) a join (reviewer join rating on reviewer.rid = rating.rid) b
+on a.mid = b.mid 
+where a.name < b.name
+order by a.name, b.name;
+
+Q6
+select name,title,stars
+from movie a,reviewer b,rating c
+where a.mid = c.mid and b.rid = c.rid and stars = (select min(stars) from rating);
+
+Q7
+select title,avg(stars) as avgrating
+from movie a join rating b on a.mid=b.mid
+group by title
+order by avgrating desc,title;
+
+Q8
+select name
+from reviewer a inner join rating b on a.rid = b.rid
+group by name
+having count(stars) >= 3;
+
+Q9
+select title,director
+from movie
+where director in (select director from movie group by director having count(director) > 1)
+order by director, title;
+
+Q10
+select title,avgrating2 from 
+(select mid,avg(stars) as avgrating2 from rating group by mid
+having avgrating2=
+(select max(avgrating) from
+(select mid,avg(stars) as avgrating from rating group by mid))) a join movie b on a.mid = b.mid;
+
+Q11
+select title,avgrating2 from 
+(select mid,avg(stars) as avgrating2 from rating group by mid
+having avgrating2=
+(select min(avgrating) from
+(select mid,avg(stars) as avgrating from rating group by mid))) a join movie b on a.mid = b.mid;
+
+Q12
+select distinct director, title, stars
+from movie a,rating b
+where a.mid = b.mid and director is not null and
+stars = (select max(stars) from rating natural join movie group by director having director = a.director);
