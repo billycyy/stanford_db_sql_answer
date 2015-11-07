@@ -1,4 +1,6 @@
 Q1
+For every situation where student A likes student B, but student B likes a different student C, return the names and grades of A, B, and C. 
+
 select a.name,a.grade,b.name,b.grade,c.name,c.grade
 from highschooler a,highschooler b,highschooler c,likes d
 where a.id = d.id1 and b.id = d.id2 
@@ -6,6 +8,8 @@ and c.id in (select e.id2 from likes e where e.id1=b.id)
 and a.id not in (select e.id2 from likes e where e.id1=b.id);
 
 Q2
+Find those students for whom all of their friends are in different grades from themselves. Return the students' names and grades. 
+
 select name,grade
 from highschooler a
 where not exists
@@ -13,12 +17,16 @@ where not exists
 where c.id1 = a.id and c.id2 = b.id and b.grade = a.grade);
 
 Q3
+What is the average number of friends per student? (Your result should be just one number.) 
+
 select avg(cnt) from
 (select count(id2) as cnt
 from friend
 group by id1);
 
 Q4
+Find the number of students who are either friends with Cassandra or are friends of friends of Cassandra. Do not count Cassandra, even though technically she is a friend of a friend. 
+
 select count(*)-1 from
 (select name,grade
 from highschooler
@@ -26,6 +34,8 @@ where id in (select id2 from friend where id1=(select id from highschooler where
 or id in (select id2 from friend where id1 in (select id2 from friend where id1=(select id from highschooler where name = 'Cassandra'))));
 
 Q5
+Find the name and grade of the student(s) with the greatest number of friends. 
+
 select name,grade
 from highschooler
 where id in
