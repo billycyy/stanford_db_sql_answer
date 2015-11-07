@@ -1,0 +1,53 @@
+Q1
+select name from highschooler
+where id in (select id1 from friend where id2 in (select id from highschooler where name='Gabriel'));
+
+Q2
+select a.name,a.grade,b.name,b.grade
+from highschooler a,highschooler b,likes c
+where id1 = a.id and id2 = b.id and (a.grade - b.grade) >= 2;
+
+Q3
+select a.name,a.grade,b.name,b.grade
+from highschooler a,highschooler b,likes c
+where c.id1 = a.id and c.id2 = b.id and a.name < b.name and
+exists (select * from likes d where d.id1 = c.id2 and d.id2 = c.id1);
+
+Q4
+select name,grade
+from highschooler
+where id not in (select id1 from likes) and id not in (select id2 from likes);
+
+Q5
+select a.name,a.grade,b.name,b.grade
+from highschooler a,highschooler b,likes c
+where c.id1 = a.id and c.id2 = b.id and b.id not in (select id1 from likes);
+
+Q6
+select d.name,d.grade
+from highschooler d
+where not exists 
+(select a.name,a.grade
+from highschooler a, highschooler b, friend c
+where a.grade != b.grade and a.id = c.id1 and b.id = c.id2 and a.id = d.id)
+order by grade,name;
+
+Q7
+select a.name,a.grade,b.name,b.grade,c.name,c.grade
+from highschooler a,highschooler b,highschooler c,likes e
+where a.id = e.id1 and b.id = e.id2 
+and a.id in (select id1 from friend where id2 = c.id)
+and b.id in (select id1 from friend where id2 = c.id) 
+and a.id not in (select id1 from friend where id2=b.id);
+
+Q8
+select(
+(select count(*) from highschooler)
+-
+(select count(distinct name) from highschooler)
+);
+
+Q9
+select name,grade
+from highschooler
+where 1 < (select count(id1) from likes where id2=id);
